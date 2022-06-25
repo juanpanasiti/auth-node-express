@@ -1,8 +1,8 @@
-const bcryptjs = require('bcryptjs');
 const { defaultPaging } = require('../constants/default-values');
 const { Status } = require('../helpers/enums');
 
 const Logger = require('../helpers/logger');
+const { encrypt } = require('../helpers/password');
 const User = require('../models/user');
 
 const getUserById = async (uid = '', fields = null) => {
@@ -46,8 +46,9 @@ const createUser = async (fields = {}) => {
         const user = new User(fields);
 
         // Ecrypt password
-        const salt = bcryptjs.genSaltSync();
-        user.password = bcryptjs.hashSync(fields.password, salt);
+        // const salt = bcryptjs.genSaltSync();
+        // user.password = bcryptjs.hashSync(fields.password, salt);
+        user.password = encrypt(fields.password);
 
         // Save
         await user.save();
@@ -59,18 +60,28 @@ const createUser = async (fields = {}) => {
     }
 };
 
-const checkPassword = (password, user) => {
-    const isOk = bcryptjs.compareSync(password, user?.password || '');
-    if (isOk) {
-        return true;
+const updateUser = async (filter, newData) => {
+    const { password, ...payload } = newData;
+    if (password) {
+        payload.password = encrypt(password);
     }
-    return false;
+    try {
+        const updatedUser = await User.findOneAndUpdate(filter, payload, { new: true });
+        if (!updatedUser) {
+            throw new Error(`The user #${uid} doesn't exist`)
+        }
+        console.log(updatedUser)
+        return updatedUser
+    } catch (err) {
+        Logger.error(err);
+        throw new Error(err);
+    }
 };
 
 module.exports = {
     getUserByFieldsFilter,
     createUser,
-    checkPassword,
     getUserById,
     getAllPaginated,
+    updateUser,
 };

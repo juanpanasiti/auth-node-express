@@ -24,6 +24,7 @@ const hasRole = (allowed_roles = []) => {
                     ],
                 });
             }
+            req.authUserRole = role
 
             next();
         } catch (err) {

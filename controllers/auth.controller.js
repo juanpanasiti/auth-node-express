@@ -5,6 +5,7 @@ const { Status } = require('../helpers/enums');
 const { wrongUserPassword } = require('../constants/error-messages');
 const Logger = require('../helpers/logger');
 const { generateJWT } = require('../helpers/jwt');
+const { check } = require('../helpers/password');
 
 const signup = async (req = request, res = response) => {
     const { username, email, password } = req.body;
@@ -39,7 +40,7 @@ const signin = async (req = request, res = response) => {
         }
 
         // check password
-        if (!userServices.checkPassword(password, user)) {
+        if (!check(password,user.password)) {
             return res.status(400).json(wrongUserPassword);
         }
 

@@ -45,7 +45,37 @@ const getUsers = async (req = request, res = response) => {
     }
 };
 
+const deleteUser = async (req = request, res = response) => {
+    const uid = req.params.id;
+    const deleteUser = !req.query.undelete;
+
+    const filter = {
+        _id: uid,
+    };
+
+    const data = {
+        status: deleteUser ? Status.DELETED : Status.ACTIVE,
+    };
+
+    try {
+        const { status } = await userServices.updateUser(filter, data);
+
+        res.status(200).json({
+            response_data: {
+                status: status
+            },
+            errors: []
+        })
+    } catch (err) {
+        Logger.error(err);
+        res.status(500).json({
+            errors: [err],
+        });
+    }
+};
+
 module.exports = {
     getUserById,
-    getUsers
+    getUsers,
+    deleteUser,
 };

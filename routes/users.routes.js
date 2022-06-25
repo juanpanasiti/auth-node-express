@@ -12,15 +12,12 @@ const router = Router();
 
 router.get(
     '/:id',
-    [
-        validateJWT,
-        check('id', "It isn't a valid uid.").isMongoId(),
-        fieldValidate,
-        checkPermissionAndExistence,
-    ],
+    [validateJWT, check('id', "It isn't a valid uid.").isMongoId(), fieldValidate, checkPermissionAndExistence],
     usersControllers.getUserById
 );
 
 router.get('/', [validateJWT, hasRole([Role.ADMIN, Role.SUPER_ADMIN]), fieldValidate], usersControllers.getUsers);
+
+router.delete('/:id', [validateJWT, hasRole([Role.SUPER_ADMIN]) ,fieldValidate], usersControllers.deleteUser);
 
 module.exports = router;
