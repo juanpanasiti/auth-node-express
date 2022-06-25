@@ -10,7 +10,7 @@ class Server {
 
         const basePathV1 = '/api/v1';
         this.authPathV1 = `${basePathV1}/auth`;
-        // TODO: users path
+        this.usersPathV1 = `${basePathV1}/users`;
 
         // DB Connection
         this.connectDadaBase();
@@ -42,6 +42,7 @@ class Server {
     setRoutes() {
         this.app.use('/api/test', require('../routes/test-conn.routes'));
         this.app.use(this.authPathV1, require('../routes/auth.routes'));
+        this.app.use(this.usersPathV1, require('../routes/users.routes'));
     }
 
     listen() {
