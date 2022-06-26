@@ -40,7 +40,7 @@ const signin = async (req = request, res = response) => {
         }
 
         // check password
-        if (!check(password,user.password)) {
+        if (!check(password, user.password)) {
             return res.status(400).json(wrongUserPassword);
         }
 
@@ -52,14 +52,20 @@ const signin = async (req = request, res = response) => {
                 user,
                 token: jwt,
             },
-            errors: []
+            errors: [],
         });
     } catch (err) {
         Logger.error(err);
     }
 };
 
+const renewJWT = async(req = request, res = response) => {
+    const jwt = await generateJWT(req.authUserID)
+    return res.status(200).json({response_data: jwt});
+};
+
 module.exports = {
     signup,
     signin,
+    renewJWT,
 };

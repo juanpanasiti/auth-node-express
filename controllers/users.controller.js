@@ -1,5 +1,5 @@
 const { response, request } = require('express');
-const { Status } = require('../helpers/enums');
+const { Status, Role } = require('../helpers/enums');
 const Logger = require('../helpers/logger');
 
 const userServices = require('../services/users.services');
@@ -45,6 +45,78 @@ const getUsers = async (req = request, res = response) => {
     }
 };
 
+const updateUser = async (req = request, res = response) => {
+    const uid = req.params.id;
+    const authRole = req.authUserRole;
+    const { email, username, role, status, password } = req.body;
+
+    const filter = {
+        _id: uid,
+        $or: [
+            {
+                status: Status.ACTIVE,
+            },
+            {
+                status: Status.PENDING,
+            },
+            {
+                status: Status.BANNED,
+            },
+        ],
+    };
+    const data = {};
+
+    if (password) {
+        data.password = password;
+    }
+
+    if (authRole === Role.USER && uid !== req.authUserID) {
+        return res.status(403).json({
+            errors: [
+                {
+                    msg: 'You do not have permission to edit this user',
+                },
+            ],
+        });
+    }
+
+    if (authRole === Role.ADMIN && Status.BANNED === status) {
+        data.status = status;
+    }
+
+    if (authRole === Role.SUPER_ADMIN) {
+        data.role = role;
+        data.email = email;
+        data.username = username;
+    }
+
+    // Control data
+    if (Object.keys(data).length === 0) {
+        return res.status(400).json({
+            errors: [
+                {
+                    msg: 'There are nothing to edit',
+                    location: 'body',
+                },
+            ],
+        });
+    }
+
+    try {
+        const updatedUser = await userServices.updateUser(filter, data);
+
+        res.status(200).json({
+            response_data: updatedUser,
+            errors: [],
+        });
+    } catch (err) {
+        Logger.error(err);
+        res.status(500).json({
+            errors: [err],
+        });
+    }
+};
+
 const deleteUser = async (req = request, res = response) => {
     const uid = req.params.id;
     const deleteUser = !req.query.undelete;
@@ -62,10 +134,10 @@ const deleteUser = async (req = request, res = response) => {
 
         res.status(200).json({
             response_data: {
-                status: status
+                status: status,
             },
-            errors: []
-        })
+            errors: [],
+        });
     } catch (err) {
         Logger.error(err);
         res.status(500).json({
@@ -77,5 +149,6 @@ const deleteUser = async (req = request, res = response) => {
 module.exports = {
     getUserById,
     getUsers,
+    updateUser,
     deleteUser,
 };

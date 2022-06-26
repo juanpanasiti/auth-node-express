@@ -24,12 +24,12 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         default: Role.USER,
-        enum: Role.VALUES(),
+        enum: Role.ALL_VALUES(),
     },
     status: {
         type: String,
         default: Status.ACTIVE, // ? Must be 'pending'?
-        enum: Status.VALUES(),
+        enum: Status.ALL_VALUES(),
     },
     google: {
         type: Boolean,

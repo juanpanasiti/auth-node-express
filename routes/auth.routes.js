@@ -4,6 +4,7 @@ const { check } = require('express-validator');
 const authController = require('../controllers/auth.controller');
 const { emailExists, usernameExists } = require('../helpers/db-validators');
 const { fieldValidate, filterValidFields, atLeastOneExists } = require('../middlewares/fields-middlewares');
+const { validateJWT } = require('../middlewares/jwt-validate');
 // const { fieldValidate } = require('../middlewares/field-validate');
 // const { filterValidFields } = require('../middlewares/filter-fields');
 
@@ -35,5 +36,7 @@ router.post(
     ],
     authController.signin
 );
+
+router.get('/renew-token', [validateJWT], authController.renewJWT);
 
 module.exports = router;

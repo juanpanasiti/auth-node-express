@@ -37,7 +37,7 @@ const validateJWT = (req = request, res = response, next) => {
                     },
                 ],
             });
-        } else if(err instanceof jwt.JsonWebTokenError){
+        } else if (err instanceof jwt.JsonWebTokenError) {
             return res.status(401).json({
                 errors: [
                     {

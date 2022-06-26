@@ -70,7 +70,6 @@ const updateUser = async (filter, newData) => {
         if (!updatedUser) {
             throw new Error(`The user #${uid} doesn't exist`)
         }
-        console.log(updatedUser)
         return updatedUser
     } catch (err) {
         Logger.error(err);

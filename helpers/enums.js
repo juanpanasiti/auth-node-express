@@ -13,7 +13,7 @@ const Role = {
     ADMIN: 'ADMIN_ROLE',
     USER: 'USER_ROLE',
 
-    VALUES: getValues,
+    ALL_VALUES: getValues,
 };
 
 const Status = {
@@ -22,7 +22,7 @@ const Status = {
     BANNED: 'BANNED_STATUS',
     DELETED: 'DELETED_STATUS',
 
-    VALUES: getValues,
+    ALL_VALUES: getValues,
 };
 
 module.exports = {
