@@ -9,8 +9,8 @@ const app = express()
 const basePathV1 = '/api/v1';
 const authPathV1 = `${basePathV1}/auth`;
 const usersPathV1 = `${basePathV1}/users`;
-app.use('/api/test', require('../routes/test-conn.routes'));
-app.use(this.authPathV1, require('../routes/auth.routes'));
-app.use(this.usersPathV1, require('../routes/users.routes'));
+app.use('/api/test', require('./routes/test-conn.routes'));
+app.use(authPathV1, require('./routes/auth.routes'));
+app.use(usersPathV1, require('./routes/users.routes'));
 
 app.listen(process.env.PORT || 3000)
